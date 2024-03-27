@@ -1,14 +1,22 @@
 from rest_framework import serializers
-from watchlist_app.models import WatchList, StreamingPlatform
+from watchlist_app.models import WatchList, StreamingPlatform, Reviews
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Reviews
+        fields = ['id', 'rating', 'description', 'created', 'watchlist', 'active', 'updated']
+        read_only_fields = ['id', 'created']
 
 
 class WatchListSerializer(serializers.ModelSerializer):
 
     # len_title = serializers.SerializerMethodField()
+    reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
         model = WatchList
-        fields = ['id', 'title', 'storyline', 'active', 'created', 'platform']
+        fields = ['id', 'title', 'storyline', 'active', 'created', 'platform', 'reviews']
         read_only_fields = ['id', 'created']
 
     # def get_len_title(self, obj):

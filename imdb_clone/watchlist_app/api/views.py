@@ -1,9 +1,10 @@
 from rest_framework.decorators import api_view
-from watchlist_app.models import WatchList, StreamingPlatform
 from rest_framework.response import Response
 from rest_framework import status
-from .serializers import WatchListSerializer, StreamingPlatformSerializer
+from .serializers import WatchListSerializer, StreamingPlatformSerializer, ReviewSerializer
 from rest_framework.views import APIView
+from rest_framework import generics, mixins
+from watchlist_app.models import WatchList, StreamingPlatform, Reviews
 
 
 class WatchListView(APIView):
@@ -113,6 +114,24 @@ class StreamingPlatformDetailView(APIView):
             return Response(status=status.HTTP_204_NO_CONTENT)
         except StreamingPlatform.DoesNotExist:
             return Response("Not found", status=status.HTTP_404_NOT_FOUND)
+
+class ReviewList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
+    serializer_class = ReviewSerializer
+    queryset = Reviews.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+
+class ReviewDetail(mixins.RetrieveModelMixin, generics.GenericAPIView):
+    serializer_class = ReviewSerializer
+    queryset = Reviews.objects.all()
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
 
 # @api_view(['GET', 'POST'])
